@@ -41,6 +41,16 @@
           >
         </div>
       </div>
+
+      <div class="column flex">
+        <input
+          type="text"
+          class="p-2 mr-2 flex-grow"
+          placeholder="New Column Name"
+          v-model="newColumnName"
+          @keyup.enter="createColumn"
+        >
+      </div>
     </div>
 
     <div v-if="isTaskOpen" class="task-bg" @click.self="close">
@@ -59,6 +69,11 @@ export default {
       return this.$route.name === 'task'
     }
   },
+  data () {
+    return {
+      newColumnName: ''
+    }
+  },
   methods: {
     goToTask (taskId) {
       this.$router.push({ name: 'task', params: { id: taskId } })
@@ -73,6 +88,13 @@ export default {
       })
 
       e.target.value = ''
+    },
+    createColumn () {
+      this.$store.commit('CREATE_COLUMN', {
+        name: this.newColumnName
+      })
+
+      this.newColumnName = ''
     },
     pickupTask (e, fromTaskIndex, fromColumnIndex) {
       e.dataTransfer.effectAllowed = 'move'
