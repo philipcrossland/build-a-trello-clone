@@ -1,24 +1,32 @@
 <template>
-  <div
-    class="task"
-    draggable
-    @dragstart="pickupTask($event, taskIndex, columnIndex)"
-    @click="goToTask(task.id)"
-    @dragover.prevent
-    @dragenter.prevent
-    @drop.stop="moveTaskOrColumn($event, column.tasks, columnIndex, taskIndex)"
-  >
-    <span class="w-full flex-no-shrink font-bold">{{ task.name }}</span>
-    <p v-if="task.description" class="w-full flex-no-shrink mt-1 text-sm">
-      {{ task.description }}
-    </p>
-  </div>
+  <AppDrop @drop="moveTaskOrColumn">
+    <AppDrag
+      class="task"
+      :transferData="{
+        type: 'task',
+        fromColumnIndex: columnIndex,
+        fromTaskIndex: taskIndex
+      }"
+      @click="goToTask(task.id)"
+    >
+      <span class="w-full flex-no-shrink font-bold">{{ task.name }}</span>
+      <p v-if="task.description" class="w-full flex-no-shrink mt-1 text-sm">
+        {{ task.description }}
+      </p>
+    </AppDrag>
+  </AppDrop>
 </template>
 
 <script>
+import AppDrag from '@/components/AppDrag'
+import AppDrop from '@/components/AppDrop'
 import movingTasksAndColumnsMixins from '@/mixins/movingTasksAndColumnsMixin'
 
 export default {
+  components: {
+    AppDrag,
+    AppDrop
+  },
   props: {
     task: {
       type: Object,
@@ -31,14 +39,6 @@ export default {
   },
   mixins: [movingTasksAndColumnsMixins],
   methods: {
-    pickupTask (e, fromTaskIndex, fromColumnIndex) {
-      e.dataTransfer.effectAllowed = 'move'
-      e.dataTransfer.dropEffect = 'move'
-
-      e.dataTransfer.setData('from-task-index', fromTaskIndex)
-      e.dataTransfer.setData('from-column-index', fromColumnIndex)
-      e.dataTransfer.setData('type', 'task')
-    },
     goToTask (taskId) {
       this.$router.push({ name: 'task', params: { id: taskId } })
     }
