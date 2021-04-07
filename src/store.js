@@ -17,7 +17,7 @@ export default new Vuex.Store({
       tasks.push({
         name,
         id: uuid(),
-        decription: ''
+        description: ''
       })
     },
     CREATE_COLUMN (state, { name }) {
