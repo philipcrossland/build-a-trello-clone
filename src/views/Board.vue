@@ -12,6 +12,7 @@
             class="task"
             v-for="(task, taskIndex) of column.tasks"
             :key="taskIndex"
+            @click="goToTask(task.id)"
           >
             <span class="w-full flex-no-shrink font-bold">{{ task.name }}</span>
             <p
@@ -24,6 +25,10 @@
         </div>
       </div>
     </div>
+
+    <div v-if="isTaskOpen" class="task-bg" @click.self="close">
+      <router-view />
+    </div>
   </div>
 </template>
 
@@ -32,7 +37,18 @@ import { mapState } from 'vuex'
 
 export default {
   computed: {
-    ...mapState(['board'])
+    ...mapState(['board']),
+    isTaskOpen () {
+      return this.$route.name === 'task'
+    }
+  },
+  methods: {
+    goToTask (taskId) {
+      this.$router.push({ name: 'task', params: { id: taskId } })
+    },
+    close () {
+      this.$router.push({ name: 'board' })
+    }
   }
 }
 </script>
